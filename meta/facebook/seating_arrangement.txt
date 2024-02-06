@@ -1,0 +1,88 @@
+Seating Arrangements
+There are n guests attending a dinner party, numbered from 1 to n. The ith guest has a height of arr[i-1] inches.
+The guests will sit down at a circular table which has n seats, numbered from 1 to n in clockwise order around the table. As the host, you will choose how to arrange the guests, one per seat. Note that there are n! possible permutations of seat assignments.
+Once the guests have sat down, the awkwardness between a pair of guests sitting in adjacent seats is defined as the absolute difference between their two heights. Note that, because the table is circular, seats 1 and n are considered to be adjacent to one another, and that there are therefore n pairs of adjacent guests.
+The overall awkwardness of the seating arrangement is then defined as the maximum awkwardness of any pair of adjacent guests. Determine the minimum possible overall awkwardness of any seating arrangement.
+Signature
+int minOverallAwkwardness(int[] arr)
+Input
+n is in the range [3, 1000].
+Each height arr[i] is in the range [1, 1000].
+Output
+Return the minimum achievable overall awkwardness of any seating arrangement.
+Example
+n = 4
+arr = [5, 10, 6, 8]
+output = 4
+If the guests sit down in the permutation [3, 1, 4, 2] in clockwise order around the table (having heights [6, 5, 8, 10], in that order), then the four awkwardnesses between pairs of adjacent guests will be |6-5| = 1, |5-8| = 3, |8-10| = 2, and |10-6| = 4, yielding an overall awkwardness of 4. It's impossible to achieve a smaller overall awkwardness.
+
+
+using System;
+using System.Collections.Generic;
+
+// We don’t provide test cases in this language yet, but have outlined the signature for you. Please write your code below, and don’t forget to test edge cases!
+class SeatingArrangements {
+    static int testCaseNo = 0;
+    
+    static void Main(string[] args) {
+        // Call minOverallAwkwardness() with test cases here
+        var inputArr = new[] {5,10,6,8};
+        var expected = 4;
+        var actual = minOverallAwkwardness(inputArr);
+        check(expected, actual);
+        
+        inputArr = new[]{1, 2, 5, 3, 7};
+        expected = 4;
+        actual = minOverallAwkwardness(inputArr);
+        check(expected, actual);
+        
+        inputArr = new[]{24, 110, 19, 7, 1};
+        expected = 91;
+        actual = minOverallAwkwardness(inputArr);
+        check(expected, actual);
+    }
+
+    private static int minOverallAwkwardness(int[] arr) {
+        // Write your code here
+        var sorted=new List<int>(arr);
+        sorted.Sort();
+        
+        var circularArray = new List<int>();
+        for (var i=0; i<arr.Length; i++)
+            if (i % 2 == 0)
+                circularArray.Add(sorted[i]);
+            else
+                circularArray.Insert(0, sorted[i]);
+        
+        var result = 0;
+        for (var i=0; i<arr.Length-1; i++)
+            if (Math.Abs(circularArray[i] - circularArray[i+1]) > result)
+                result = Math.Abs(circularArray[i] - circularArray[i+1]);
+        
+        //compare akwardness between 0 and last
+        if (Math.Abs(circularArray[0] - circularArray[arr.Length-1]) > result)
+                result = Math.Abs(circularArray[0] - circularArray[arr.Length-1]);
+            
+        
+        return result;
+    }
+    
+    private static bool check(int expected, int actual)
+    {
+        testCaseNo++;
+        
+        var result = expected == actual;
+        
+        if (result)
+            Console.WriteLine("Test Case {0} - PASS", testCaseNo);
+        else
+        {
+            Console.WriteLine("Test Case {0} - FAILED", testCaseNo);
+            Console.WriteLine("Expected: {0}", expected);
+            Console.WriteLine("Actual: {0}", actual);
+        }
+        Console.WriteLine();
+        
+        return result;
+    }
+}

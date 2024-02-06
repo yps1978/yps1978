@@ -1,0 +1,146 @@
+Nodes in a Subtree
+You are given a tree that contains N nodes, each containing an integer u which corresponds to a lowercase character c in the string s using 1-based indexing.
+You are required to answer Q queries of type [u, c], where u is an integer and c is a lowercase letter. The query result is the number of nodes in the subtree of node u containing c.
+Signature
+int[] countOfNodes(Node root, ArrayList<Query> queries, String s)
+Input
+A pointer to the root node, an array list containing Q queries of type [u, c], and a string s
+Constraints
+N and Q are the integers between 1 and 1,000,000
+u is a unique integer between 1 and N
+s is of the length of N, containing only lowercase letters
+c is a lowercase letter contained in string s
+Node 1 is the root of the tree
+Output
+An integer array containing the response to each query
+Example
+        1(a)
+        /   \
+      2(b)  3(a)
+s = "aba"
+RootNode = 1
+query = [[1, 'a']]
+Note: Node 1 corresponds to first letter 'a', Node 2 corresponds to second letter of the string 'b', Node 3 corresponds to third letter of the string 'a'.
+output = [2]
+Both Node 1 and Node 3 contain 'a', so the number of nodes within the subtree of Node 1 containing 'a' is 2.
+
+
+using System;
+using System.Collections;
+using System.Collections.Generic;
+
+class Node{
+    public int u {get;set;}
+    public char c {get;set;}
+    public List<Node> children {get;set;}
+    
+    public Node(int data)
+    {
+        this.u = data;
+        this.children = new List<Node>();
+    }
+}
+
+class Query
+{
+    public int u {get;set;}
+    public char c {get;set;}
+    
+    public Query(int pu, char pc)
+    {
+        u = pu;
+        c = pc;
+    }
+}
+
+class NodesInSubtree{
+    static int testCaseNo = 0;
+    
+    static void Main(string[] args)
+    {
+        int n = 3, q = 1;
+        var s = "aba";
+        var root = new Node(1);
+        root.children.Add(new Node(2));
+        root.children.Add(new Node(3));
+        var queries = new[] {new Query(1, 'a')};
+        var actual = countOfNodes(root, queries, s);
+        var expected = new[] {2};
+        check(expected, actual);
+
+        (n ,q) = (7, 3);
+        s = "abaacab";
+        root = new Node(1);
+        root.children.Add(new Node(2));
+        root.children.Add(new Node(3));
+        root.children.Add(new Node(7));
+        root.children[0].children.Add(new Node(4));
+        root.children[0].children.Add(new Node(5));
+        root.children[1].children.Add(new Node(6));
+        queries = new[] {new Query(1, 'a'),new Query(2, 'b'),new Query(3, 'a')};
+        actual = countOfNodes(root, queries, s);
+        expected = new[] {4, 1, 2};
+        check(expected, actual);
+    }
+
+    private static int[] countOfNodes(Node root, Query[] queries, String s)
+    {
+        var result = new int[queries.Length];
+        
+        for (var i=0; i<queries.Length; i++)
+            result[i] = countNodes(root, queries[i], s, false);
+        
+        return result;
+    }
+    
+    private static int countNodes(Node node, Query query, string s, bool counting)
+    {
+        var result = 0;
+        
+        if (node==null)
+            return 0;
+        
+        if (node.u == query.u)
+            counting = true;
+
+        if (counting && s[node.u-1] == query.c)
+            result = 1;
+        
+        for (var i=0; i<node.children.Count; i++)
+        {
+            var aux = countNodes(node.children[i], query, s, counting);
+            result += aux;
+        }
+        
+        return result;
+    }
+    
+    private static bool check(int[] expected, int[] actual)
+    {
+        testCaseNo++;
+        var result = expected.Length == actual.Length;
+        
+        if (result)
+        {
+            for (var i=0; i<expected.Length; i++)
+                if (expected[i]!=actual[i])
+                {
+                    result = false;
+                    break;
+                }
+        }
+        
+        if (result)
+            Console.WriteLine("Test Case {0} - PASS", testCaseNo);
+        else
+        {
+            Console.WriteLine("Test Case {0} - FAILED", testCaseNo);
+            Console.WriteLine("Expected: [{0}]", String.Join(",", expected));
+            Console.WriteLine("Actual: [{0}]", String.Join(",", actual));
+        }
+        Console.WriteLine();
+        
+        return result;
+    }
+}
+

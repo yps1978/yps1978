@@ -1,0 +1,127 @@
+Element Swapping
+Given a sequence of n integers arr, determine the lexicographically smallest sequence which may be obtained from it after performing at most k element swaps, each involving a pair of consecutive elements in the sequence.
+Note: A list x is lexicographically smaller than a different equal-length list y if and only if, for the earliest index at which the two lists differ, x's element at that index is smaller than y's element at that index.
+Signature
+int[] findMinArray(int[] arr, int k)
+Input
+n is in the range [1, 1000].
+Each element of arr is in the range [1, 1,000,000].
+k is in the range [1, 1000].
+Output
+Return an array of n integers output, the lexicographically smallest sequence achievable after at most k swaps.
+Example 1
+n = 3
+k = 2
+arr = [5, 3, 1]
+output = [1, 5, 3]
+We can swap the 2nd and 3rd elements, followed by the 1st and 2nd elements, to end up with the sequence [1, 5, 3]. This is the lexicographically smallest sequence achievable after at most 2 swaps.
+Example 2
+n = 5
+k = 3
+arr = [8, 9, 11, 2, 1]
+output = [2, 8, 9, 11, 1]
+We can swap [11, 2], followed by [9, 2], then [8, 2].
+
+
+using System;
+
+// We don’t provide test cases in this language yet, but have outlined the signature for you. Please write your code below, and don’t forget to test edge cases!
+class ElementSwapping {
+    static int testCaseNo = 0;
+    
+    static void Main(string[] args) {
+        //Call findMinArray() with test cases here
+        var input = new []{5, 3, 1};
+        var k = 2;
+        var expected = new []{1, 5, 3};
+        var actual = findMinArray(input, k);
+        check(expected, actual);
+
+        input = new []{8, 9, 11, 2, 1};
+        k = 3;
+        expected = new []{2, 8, 9, 11, 1};
+        actual = findMinArray(input, k);
+        check(expected, actual);
+
+        input = new []{2, 7, 8, 1, 5, 3};
+        k = 2;
+        expected = new []{2, 1, 7, 8, 5, 3};
+        actual = findMinArray(input, k);
+        check(expected, actual);
+
+        input = new []{2, 7, 8, 1, 5, 3};
+        k = 3;
+        expected = new []{1, 2, 7, 8, 5, 3};
+        actual = findMinArray(input, k);
+        check(expected, actual);
+
+        input = new []{2, 7, 8, 1, 5, 3};
+        k = 4;
+        expected = new []{1, 2, 7, 5, 8, 3};
+        actual = findMinArray(input, k);
+        check(expected, actual);
+    }
+
+    private static int[] findMinArray(int[] arr, int k) {
+        // Write your code here
+        var result = new int[arr.Length];
+        
+        var start = 0;
+        var swapCount = 0;
+        while (swapCount < k && start < arr.Length)
+        {
+            //find min from 0 to k
+            var min = Int32.MaxValue;
+            var idxMin = -1;
+            for (var i = start; i < k + start - swapCount + 1; i++)
+                if (arr[i] < min)
+                {
+                    min = arr[i];
+                    idxMin = i;
+                }
+
+            for (var i = idxMin; i > start; i--)
+            {
+                var aux = arr[i-1];
+                arr[i-1] = arr[i];
+                arr[i] = aux;
+                swapCount++;
+            }
+            
+            start++;
+        }
+        
+        
+        return arr;
+    }
+    
+    private static bool check(int[] expected, int[] actual)
+    {
+        testCaseNo++;
+        
+        var result = expected.Length == actual.Length;
+        
+        if (result)
+        {
+            for (var i=0; i<expected.Length; i++)
+                if (expected[i] != actual[i])
+                {
+                    result = false;
+                    break;
+                }
+        }
+        
+        if (result)
+            Console.WriteLine("Test Case {0} - PASS", testCaseNo);
+        else
+        {
+            Console.WriteLine("Test Case {0} - FAILED", testCaseNo);
+            Console.WriteLine("Expected [{0}]", String.Join(",", expected));
+            Console.WriteLine("Actual [{0}]", String.Join(",", actual));
+        }
+        Console.WriteLine();
+        
+        return result;
+    }
+}
+

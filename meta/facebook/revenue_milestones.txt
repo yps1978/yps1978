@@ -1,0 +1,88 @@
+Revenue Milestones
+We keep track of the revenue Facebook makes every day, and we want to know on what days Facebook hits certain revenue milestones. Given an array of the revenue on each day, and an array of milestones Facebook wants to reach, return an array containing the days on which Facebook reached every milestone.
+Signature
+int[] getMilestoneDays(int[] revenues, int[] milestones)
+Input
+revenues is a length-N array representing how much revenue FB made on each day (from day 1 to day N). milestones is a length-K array of total revenue milestones.
+Output
+Return a length-K array where K_i is the day on which FB first had milestones[i] total revenue. If the milestone is never met, return -1.
+Example
+revenues = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+milestones = [100, 200, 500]
+output = [4, 6, 10]
+Explanation
+On days 4, 5, and 6, FB has total revenue of $100, $150, and $210 respectively. Day 6 is the first time that FB has >= $200 of total revenue.
+
+
+using System;
+
+// We don’t provide test cases in this language yet, but have outlined the signature for you. Please write your code below, and don’t forget to test edge cases!
+class RevenueMilestones {
+    private static int testCaseNo=0;
+    
+    static void Main(string[] args) {
+        // Call getMilestoneDays() with test cases here
+        var inputRevenues = new[]{10, 20, 30, 40, 50, 60, 70, 80, 90, 100};
+        var inputMilestones = new[]{100,200,500};
+        var expected = new[]{4,6,10};
+        var actual = getMilestoneDays(inputRevenues, inputMilestones);
+        check(expected, actual);
+        
+        inputRevenues = new[]{10, 100, 150, 200};
+        inputMilestones = new[]{100,200,500};
+        expected = new[]{2,3,-1};
+        actual = getMilestoneDays(inputRevenues, inputMilestones);
+        check(expected, actual);
+    }
+
+    private static int[] getMilestoneDays(int[] revenues, int[] milestones) {
+        // Write your code here
+        var result = new int[milestones.Length];
+        
+        var j=0;
+        var sum = 0;
+        for (var i=0; i<milestones.Length; i++)
+        {
+            result[i] = -1;
+            while (j<revenues.Length)
+            {
+                var metMilestone = sum + revenues[j] >= milestones[i];
+                sum += revenues[j];
+                j++;
+                if (metMilestone)
+                {
+                    result[i] = j;
+                    break;
+                }
+            }
+        }
+        
+        return result;
+    }
+    
+    private static bool check(int[] expected, int[] actual)
+    {
+        testCaseNo++;
+        var result = expected.Length == actual.Length;
+        
+        if (result)
+            for (var i=0; i<expected.Length; i++)
+                if (expected[i]!=actual[i])
+                {
+                    result=false;
+                    break;
+                }
+        
+        if (result)
+            Console.WriteLine("Test Case {0} - PASS", testCaseNo);
+        else
+        {
+            Console.WriteLine("Test Case {0} - FAILED", testCaseNo);
+            Console.WriteLine("Expected: {0}", String.Join(",", expected));
+            Console.WriteLine("Actual {0}", String.Join(",", actual));
+        }
+        Console.WriteLine();
+        
+        return result;
+    }
+}

@@ -1,0 +1,108 @@
+Contiguous Subarrays
+You are given an array arr of N integers. For each index i, you are required to determine the number of contiguous subarrays that fulfill the following conditions:
+The value at index i must be the maximum element in the contiguous subarrays, and
+These contiguous subarrays must either start from or end on index i.
+Signature
+int[] countSubarrays(int[] arr)
+Input
+Array arr is a non-empty list of unique integers that range between 1 to 1,000,000,000
+Size N is between 1 and 1,000,000
+Output
+An array where each index i contains an integer denoting the maximum number of contiguous subarrays of arr[i]
+Example:
+arr = [3, 4, 1, 6, 2]
+output = [1, 3, 1, 5, 1]
+Explanation:
+For index 0 - [3] is the only contiguous subarray that starts (or ends) with 3, and the maximum value in this subarray is 3.
+For index 1 - [4], [3, 4], [4, 1]
+For index 2 - [1]
+For index 3 - [6], [6, 2], [1, 6], [4, 1, 6], [3, 4, 1, 6]
+For index 4 - [2]
+So, the answer for the above input is [1, 3, 1, 5, 1]
+
+
+using System;
+using System.Collections;
+
+// We don’t provide test cases in this language yet, but have outlined the signature for you. Please write your code below, and don’t forget to test edge cases!
+class ContiguousSubArrays {
+    static void Main(string[] args) {
+        // Call countSubarrays() with test cases here
+        var input = new[] {3,4,1,6,2};
+        var expected = new[] {1,3,1,5,1};
+        var actual = countSubarrays(input);
+        check(expected, actual);
+        
+        input = new[] {2,7,4,1,8,3};
+        expected = new[] {1,4,2,1,6,1};
+        actual = countSubarrays(input);
+        check(expected, actual);
+        
+        input = new[] {1,8,1};
+        expected = new[] {1,3,1};
+        actual = countSubarrays(input);
+        check(expected, actual);
+    }
+
+    private static int[] countSubarrays(int[] arr) {
+        // Write your code here
+        var result = new int[arr.Length];
+        var stack = new Stack();
+        for (var i=0; i<arr.Length; i++)
+        {
+            while (stack.Count>0 && arr[(int)stack.Peek()] < arr[i])
+            {
+                result[i] += result[(int)stack.Pop()];
+            }
+            stack.Push(i);
+            result[i]++;
+        }
+        
+        stack.Clear();
+        
+        var aux = new int[arr.Length];
+        for (var i=arr.Length-1; i>=0; i--)
+        {
+            int stackPeek;
+            while (stack.Count>0 && arr[stackPeek=(int)stack.Peek()] < arr[i])
+            {
+                result[i] += aux[stackPeek];
+                aux[i] += aux[stackPeek];
+                stack.Pop();
+            }
+            stack.Push(i);
+            aux[i]++;
+        }
+        
+        return result;
+    }
+    
+    static int testCaseNo = 1;
+    private static bool check(int[] expected, int[] actual){
+        //check lengths match
+        var result = expected.Length == actual.Length;
+        
+        if (result){
+            for (var i=0; i<expected.Length; i++)
+                if (expected[i]!=actual[i])
+                {
+                    result = false;
+                    break;
+                }
+        }
+        
+        if (result)
+            Console.WriteLine("Test case {0}, PASS", testCaseNo);
+        else
+        {
+            Console.WriteLine("Test case {0}, FAILED", testCaseNo);
+            Console.WriteLine("Expected: {0}", String.Join(",", expected));
+            Console.WriteLine("Actual: {0}", String.Join(",", actual));
+        }
+        Console.WriteLine();
+        
+        testCaseNo++;
+        
+        return result;
+    }
+}

@@ -1,0 +1,110 @@
+Median Stream
+You're given a list of n integers arr[0..(n-1)]. You must compute a list output[0..(n-1)] such that, for each index i (between 0 and n-1, inclusive), output[i] is equal to the median of the elements arr[0..i] (rounded down to the nearest integer).
+The median of a list of integers is defined as follows. If the integers were to be sorted, then:
+If there are an odd number of integers, then the median is equal to the middle integer in the sorted order.
+Otherwise, if there are an even number of integers, then the median is equal to the average of the two middle-most integers in the sorted order.
+Signature
+int[] findMedian(int[] arr)
+Input
+n is in the range [1, 1,000,000].
+Each value arr[i] is in the range [1, 1,000,000].
+Output
+Return a list of n integers output[0..(n-1)], as described above.
+Example 1
+n = 4
+arr = [5, 15, 1, 3]
+output = [5, 10, 5, 4]
+The median of [5] is 5, the median of [5, 15] is (5 + 15) / 2 = 10, the median of [5, 15, 1] is 5, and the median of [5, 15, 1, 3] is (3 + 5) / 2 = 4.
+Example 2
+n = 2
+arr = [1, 2]
+output = [1, 1]
+The median of [1] is 1, the median of [1, 2] is (1 + 2) / 2 = 1.5 (which should be rounded down to 1).
+
+
+using System;
+
+// We don’t provide test cases in this language yet, but have outlined the signature for you. Please write your code below, and don’t forget to test edge cases!
+class MedianStream {
+    static void Main(string[] args) {
+        // Call findMedian() with test cases here
+        var inputArr = new []{5, 15, 1, 3};
+        var expected = new []{5, 10, 5, 4};
+        var actual = findMedian(inputArr);
+        check(expected, actual);
+        
+        inputArr = new []{1,2};
+        expected = new []{1,1};
+        actual = findMedian(inputArr);
+        check(expected, actual);
+    }
+
+    private static int[] findMedian(int[] arr) {
+        // Write your code here
+        var result = new int[arr.Length];
+        
+        var sorted = new int[arr.Length];
+        
+        for (var i=0; i<arr.Length; i++)
+        {
+            insertSorted(ref sorted, i, arr[i]);
+            int median;
+            var midIdx = (int)((i+1) / 2);
+            if (i > 0 && (i+1) % 2 == 0) // size is odd
+                median = (int)((sorted[midIdx-1] + sorted[midIdx]) / 2);
+            else
+                median = sorted[midIdx];
+            
+            result[i] = median;
+        }
+        
+        return result;
+    }
+    
+    private static void insertSorted(ref int[] arr, int length, int element)
+    {
+        var i=0;
+        
+        while (i<length && element >= arr[i])
+            i++;
+        
+        for (var j=length; j>i; j--)
+            arr[j] = arr[j-1];
+        
+        arr[i] = element;
+    }
+    
+    
+    
+    static int testCaseNo = 1;
+    private static bool check(int[] expected, int[] actual){
+        var result = expected.Length == actual.Length;
+        
+        var rightTick = "\u2713";
+        var wrongTick = "\u2717";
+        
+        if (result)
+        {
+            for (var i=0; i<expected.Length; i++)
+                if (expected[i]!=actual[i])
+                {
+                    result = false;
+                    break;
+                }
+        }
+        
+        if (result)
+            Console.WriteLine("{0}Test case #{1}, PASS", rightTick, testCaseNo);
+        else
+        {
+            Console.WriteLine("{0}Test case #{1}, FAILED", wrongTick, testCaseNo);
+            Console.WriteLine("Expected: {0}", String.Join(",", expected));
+            Console.WriteLine("Actual: {0}", String.Join(",", actual));
+        }
+        Console.WriteLine();
+        
+        testCaseNo++;
+        
+        return result;
+    }
+}

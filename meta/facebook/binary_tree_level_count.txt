@@ -1,0 +1,83 @@
+This problem is from an example fb illustrates in the preparation phase.
+
+using System;
+using System.Collections.Generic;
+
+class Node{
+    public int val{get;set;}
+    public Node Left {get;set;}
+    public Node Right {get;set;}
+    
+    public Node(int v, Node left=null, Node right=null){
+        val = v;
+        
+        if (left != null)
+            Left = left;
+        
+        if (right != null)
+            Right = right;
+    }
+}
+class A
+{
+    static int testCaseNo = 0;
+    
+    static void Main(string[] args){
+        var root = new Node(1, new Node(2), new Node(2, new Node(4, null, new Node(5, new Node(6), new Node(7)))));
+        var expected = new []{1, 2, 1, 1, 2};
+        var counter = new List<int>();
+        getLevelCount(root, counter, 0);
+        var actual = counter.ToArray();
+        check(expected, actual);
+        
+        root = new Node(1, null, new Node(2, new Node(3, new Node(4, null, new Node(5, new Node(6), new Node(7)))), new Node(9)));
+        expected = new []{1,1,2,1,1,2};
+        counter = new List<int>();
+        getLevelCount(root, counter, 0);
+        actual = counter.ToArray();
+        check(expected, actual);
+    }
+    
+    private static void getLevelCount(Node node, List<int> counter, int level=0)
+    {
+        if (node==null)
+            return;
+        
+        if (counter.Count<=level)
+            counter.Add(0);
+        
+        counter[level]++;
+        
+        getLevelCount(node.Left, counter, level+1);
+        getLevelCount(node.Right, counter, level+1);
+    }
+    
+    private static bool check(int[] expected, int[] actual){
+        testCaseNo++;
+        var result = expected.Length == actual.Length;
+                
+        var rightTick = "\u2713";
+        var wrongTick = "\u2717";
+        
+        if (result)
+            for (int i=0; i<expected.Length; i++)
+                if (expected[i]!=actual[i])
+                {
+                    result=false;
+                    break;
+                }
+        
+        if (result)
+            Console.WriteLine("{0} Test case #{1}, PASS", rightTick, testCaseNo);
+        else
+        {
+            Console.WriteLine("{0} Test case #{1}, FAILED", wrongTick, testCaseNo);
+            Console.WriteLine("Expected: {0}", String.Join(",", expected));
+            Console.WriteLine("Actual: {0}", String.Join(",", actual));
+        }
+        Console.WriteLine();
+        
+        
+        return result;
+    }
+}

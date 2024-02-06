@@ -1,0 +1,90 @@
+Encrypted Words
+You've devised a simple encryption method for alphabetic strings that shuffles the characters in such a way that the resulting string is hard to quickly read, but is easy to convert back into the original string.
+When you encrypt a string S, you start with an initially-empty resulting string R and append characters to it as follows:
+Append the middle character of S (if S has even length, then we define the middle character as the left-most of the two central characters)
+Append the encrypted version of the substring of S that's to the left of the middle character (if non-empty)
+Append the encrypted version of the substring of S that's to the right of the middle character (if non-empty)
+For example, to encrypt the string "abc", we first take "b", and then append the encrypted version of "a" (which is just "a") and the encrypted version of "c" (which is just "c") to get "bac".
+If we encrypt "abcxcba" we'll get "xbacbca". That is, we take "x" and then append the encrypted version "abc" and then append the encrypted version of "cba".
+Input
+S contains only lower-case alphabetic characters
+1 <= |S| <= 10,000
+Output
+Return string R, the encrypted version of S.
+Example 1
+S = "abc"
+R = "bac"
+Example 2
+S = "abcd"
+R = "bacd"
+Example 3
+S = "abcxcba"
+R = "xbacbca"
+Example 4
+S = "facebook"
+R = "eafcobok"
+
+
+using System;
+
+// We don’t provide test cases in this language yet, but have outlined the signature for you. Please write your code below, and don’t forget to
+public class EncryptedWords {
+    private static int testCaseNo = 0;
+    
+    static void Main(String[] args) {
+        // Call findEncryptedWord with test cases here
+        var input = "abc";
+        var expected = "bac";
+        var actual = findEncryptedWord(input);
+        check(expected, actual);
+        
+        input = "abcd";
+        expected = "bacd";
+        actual = findEncryptedWord(input);
+        check(expected, actual);
+        
+        input = "abcxcba";
+        expected = "xbacbca";
+        actual = findEncryptedWord(input);
+        check(expected, actual);
+        
+        input = "facebook";
+        expected = "eafcobok";
+        actual = findEncryptedWord(input);
+        check(expected, actual);
+    }
+
+    private static String findEncryptedWord(String s) {
+        // Write your code here
+        if (s.Length==0)
+            return "";
+        
+        if (s.Length==1)
+            return s;
+        
+        var midIndex = s.Length % 2 == 0 ? (s.Length / 2) - 1 : s.Length / 2;
+        
+        return s[midIndex]
+            + findEncryptedWord(s.Substring(0, midIndex))
+            + findEncryptedWord(s.Substring(midIndex+1));
+    }
+    
+    private static bool check(string expected, string actual)
+    {
+        testCaseNo++;
+        
+        var result = expected == actual;
+        
+        if (result)
+            Console.WriteLine("Test Case {0} - PASS", testCaseNo);
+        else
+        {
+            Console.WriteLine("Test Case {0} - FAILED", testCaseNo);
+            Console.WriteLine("Expected: {0}", expected);
+            Console.WriteLine("Actual: {0}", actual);
+        }
+        Console.WriteLine();
+        
+        return result;
+    }
+}

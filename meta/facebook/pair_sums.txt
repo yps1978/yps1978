@@ -1,0 +1,90 @@
+Pair Sums
+Given a list of n integers arr[0..(n-1)], determine the number of different pairs of elements within it which sum to k.
+If an integer appears in the list multiple times, each copy is considered to be different; that is, two pairs are considered different if one pair includes at least one array index which the other doesn't, even if they include the same values.
+Signature
+int numberOfWays(int[] arr, int k)
+Input
+n is in the range [1, 100,000].
+Each value arr[i] is in the range [1, 1,000,000,000].
+k is in the range [1, 1,000,000,000].
+Output
+Return the number of different pairs of elements which sum to k.
+Example 1
+n = 5
+k = 6
+arr = [1, 2, 3, 4, 3]
+output = 2
+The valid pairs are 2+4 and 3+3.
+Example 2
+n = 5
+k = 6
+arr = [1, 5, 3, 3, 3]
+output = 4
+There's one valid pair 1+5, and three different valid pairs 3+3 (the 3rd and 4th elements, 3rd and 5th elements, and 4th and 5th elements).
+
+using System;
+using System.Collections;
+using System.Collections.Generic;
+
+// We don’t provide test cases in this language yet, but have outlined the signature for you. Please write your code below, and don’t forget to test edge cases!
+class PairSums {
+    static void Main(string[] args) {
+        var k=6;
+        var input=new []{1, 2, 3, 4, 3};
+        var expected=2;
+        var actual = numberOfWays(input, k);
+        check(expected, actual);
+
+        k=6;
+        input=new []{1, 5, 3, 3, 3};
+        expected=4;
+        actual = numberOfWays(input, k);
+        check(expected, actual);
+    }
+    
+    private static int numberOfWays(int[] arr, int k) {
+        var hash = new Hashtable();
+        
+        for (int i=0; i<arr.Length; i++)
+        {
+            if (!hash.ContainsKey(arr[i]))
+                hash.Add(arr[i], 0);
+
+            hash[arr[i]] = (int)hash[arr[i]] + 1;
+        }
+        int matches = 0;
+
+        for (int i=0; i<arr.Length; i++)
+        {
+            if(hash[k-arr[i]] != null)
+                matches += (int)hash[k - arr[i]];
+
+            if (arr[i] * 2 == k)
+                matches--;
+        }
+
+        return matches / 2;
+
+    }
+
+    static int testCaseNo = 1;
+    private static bool check(int expected, int actual)
+    {
+        var rightTick = "\u2713";
+        var wrongTick = "\u2717";
+        var result = expected == actual;
+        if (result)
+            Console.WriteLine("{0} Test case #{1}, PASS", rightTick, testCaseNo);
+        else
+        {
+            Console.WriteLine("{0} Test case #{1}, FAILED", wrongTick, testCaseNo);
+            Console.WriteLine("Expected: {0}", expected);
+            Console.WriteLine("Actual: {0}", actual);
+        }
+        Console.WriteLine("");
+
+        testCaseNo++;
+
+        return result;
+    }
+}

@@ -1,0 +1,80 @@
+Change in a Foreign Currency
+You likely know that different currencies have coins and bills of different denominations. In some currencies, it's actually impossible to receive change for a given amount of money. For example, Canada has given up the 1-cent penny. If you're owed 94 cents in Canada, a shopkeeper will graciously supply you with 95 cents instead since there exists a 5-cent coin.
+Given a list of the available denominations, determine if it's possible to receive exact change for an amount of money targetMoney. Both the denominations and target amount will be given in generic units of that currency.
+Signature
+boolean canGetExactChange(int targetMoney, int[] denominations)
+Input
+1 ≤ |denominations| ≤ 100
+1 ≤ denominations[i] ≤ 10,000
+1 ≤ targetMoney ≤ 1,000,000
+Output
+Return true if it's possible to receive exactly targetMoney given the available denominations, and false if not.
+Example 1
+denominations = [5, 10, 25, 100, 200]
+targetMoney = 94
+output = false
+Every denomination is a multiple of 5, so you can't receive exactly 94 units of money in this currency.
+Example 2
+denominations = [4, 17, 29]
+targetMoney = 75
+output = true
+You can make 75 units with the denominations [17, 29, 29].
+
+
+using System;
+
+// We don’t provide test cases in this language yet, but have outlined the signature for you. Please write your code below, and don’t forget to test edge cases!
+class ForeignCurrency {
+    private static int testCaseNo = 0;
+    
+    static void Main(string[] args) {
+        // Call canGetExactChange() with test cases here
+        var inputTargetMoney = 94;
+        var inputDenominations = new []{5, 10, 25, 100, 20};
+        var expected = false;
+        var actual = canGetExactChange(inputTargetMoney, inputDenominations);
+        check(expected, actual);
+        
+        inputTargetMoney = 75;
+        inputDenominations = new []{4,17,29};
+        expected = true;
+        actual = canGetExactChange(inputTargetMoney, inputDenominations);
+        check(expected, actual);
+    }
+
+    private static bool canGetExactChange(int targetMoney, int[] denominations) {
+        // Write your code here        
+        if (targetMoney == 0)
+            return true;
+
+        for (var i=0; i<denominations.Length; i++)
+        {
+            if (denominations[i] <= targetMoney)
+            {
+                if (canGetExactChange(targetMoney - denominations[i], denominations))
+                    return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    private static bool check(bool expected, bool actual)
+    {
+        testCaseNo++;
+        
+        var result = expected == actual;
+        
+        if (result)
+            Console.WriteLine("Test Case {0} - PASS", testCaseNo);
+        else
+        {
+            Console.WriteLine("Test Case {0} - FAILED", testCaseNo);
+            Console.WriteLine("Expected: {0}", expected);
+            Console.WriteLine("Actual: {0}", actual);
+        }
+        Console.WriteLine();
+        
+        return result;
+    }
+}

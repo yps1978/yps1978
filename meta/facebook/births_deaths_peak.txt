@@ -1,0 +1,119 @@
+// facebook codeing interview example, whiteboard
+// https://vimeo.com/158532188
+
+
+using System;
+using System.Collections;
+using System.Collections.Generic;
+
+class Person
+{
+    public int Birth { get; set; }
+    public int Death { get; set; }
+
+    public Person(int birth, int death)
+    {
+        Birth = birth;
+        Death = death;
+    }
+}
+
+class AlivePeak
+{
+    static int testCaseNo = 0;
+
+    static void Main(string[] args)
+    {
+        var people = new Person[]{
+            new Person(2000, 2010),
+            new Person(1975, 2005),
+            new Person(1975, 2003),
+            new Person(1803, 1809),
+            new Person(1750, 1869),
+            new Person(1840, 1935),
+            new Person(1803, 1921),
+            new Person(1894, 1921)
+        };
+        var expected = 1894;
+        var actual = peak(people);
+        check(expected, actual);
+    }
+
+    private static int peak(Person[] people)
+    {
+        var firstBirth = getFirstBirth(people);
+        var lastBirth = getLastBirth(people);
+
+        var deltas = getDeltas(people, firstBirth, lastBirth);
+
+        var peakYear = 0;
+        var peakCount = 0;
+        var pSum = 0;
+        for (int i=0; i<deltas.Length; i++)
+        {
+            pSum += deltas[i];
+            if (pSum > peakCount)
+            {
+                peakCount = pSum;
+                peakYear = i;
+            }
+        }
+
+        return peakYear + firstBirth;
+    }
+
+    private static int[] getDeltas(Person[] people, int firstBirth, int lastBirth)
+    {
+        var deltas = new int[lastBirth - firstBirth+1];
+
+        for (int i = 0; i < people.Length; i++)
+        {
+            deltas[people[i].Birth - firstBirth] += 1;
+            if (people[i].Death <= lastBirth)
+                deltas[people[i].Death - firstBirth+1] -= 1;
+        }
+
+        return deltas;
+    }
+
+    private static int getFirstBirth(Person[] people)
+    {
+        var min = int.MaxValue;
+        for (int i = 0; i < people.Length; i++)
+        {
+            if (people[i].Birth < min)
+                min = people[i].Birth;
+        }
+        return min;
+    }
+
+    private static int getLastBirth(Person[] people)
+    {
+        var max = int.MinValue;
+        for (int i = 0; i < people.Length; i++)
+        {
+            if (people[i].Birth > max)
+                max = people[i].Birth;
+        }
+        return max;
+    }
+
+    private static bool check(int expected, int actual)
+    {
+        testCaseNo++;
+
+        var result = expected == actual;
+
+        if (result)
+            Console.WriteLine("Test Case {0} - PASS", testCaseNo);
+        else
+        {
+            Console.WriteLine("Test Case {0} - FAILED", testCaseNo);
+            Console.WriteLine("Expected: {0}", expected);
+            Console.WriteLine("Actual: {0}", actual);
+        }
+        Console.WriteLine();
+
+        return result;
+    }
+}

@@ -1,0 +1,106 @@
+Reverse to Make Equal
+Given two arrays A and B of length N, determine if there is a way to make A equal to B by reversing any subarrays from array B any number of times.
+Signature
+bool areTheyEqual(int[] arr_a, int[] arr_b)
+Input
+All integers in array are in the range [0, 1,000,000,000].
+Output
+Return true if B can be made equal to A, return false otherwise.
+Example
+A = [1, 2, 3, 4]
+B = [1, 4, 3, 2]
+output = true
+After reversing the subarray of B from indices 1 to 3, array B will equal array A.
+
+
+using System;
+using System.Collections.Generic;
+
+// We don’t provide test cases in this language yet, but have outlined the signature for you. Please write your code below, and don’t forget to test edge cases!
+class ContiguousSubArrays {
+    static void Main(string[] args) {
+        // Call countSubarrays() with test cases here
+        var inputA = new[] {1,2,3,4};
+        var inputB = new[] {1,4,3,2};
+        var expected = true;
+        var actual = areTheyEqual(inputA, inputB);
+        check(expected, actual);
+        
+        inputA = new[] {1,4,4,5,9,6,0,9,9,9,9,2,8,7};
+        inputB = new[] {6,7,4,8,4,9,2,0,1,5,9,9,9,9};
+        expected = true;
+        actual = areTheyEqual(inputA, inputB);
+        check(expected, actual);
+        
+        inputA = null;
+        inputB = new[] {6,7,4,8,4,9,2,0,1,5,9,9,9,9};
+        expected = false;
+        actual = areTheyEqual(inputA, inputB);
+        check(expected, actual);
+    }
+
+    private static bool areTheyEqual(int[] arr_a, int[] arr_b) {
+        // Write your code here
+        if (arr_a?.Length!=arr_b?.Length)
+            return false;
+        
+        var a = quicksort(arr_a);
+        var b = quicksort(arr_b);
+        for (var i=0; i<a.Length; i++)
+            if (a[i]!=b[i])
+                return false;
+        
+        return true;
+    }
+
+    private static int[] quicksort(int[] list)
+    {
+        if (list.Length>1)
+        {
+            var n = list.Length;
+            var pivot = (list[0] + list[n-1]) / 2;
+            var left = new List<int>();
+            var right = new List<int>();
+            var middle = new List<int>();
+            for (var i=0; i<n; i++)
+            {
+                if (list[i] < pivot)
+                    left.Add(list[i]);
+                else if (list[i] > pivot)
+                    right.Add(list[i]);
+                else
+                    middle.Add(list[i]);
+            }
+            
+            var result = new int[n];
+            quicksort(left.ToArray()).CopyTo(result, 0);
+            middle.CopyTo(result, left.Count);
+            quicksort(right.ToArray()).CopyTo(result, left.Count + middle.Count);
+            
+            return result;
+        }
+        return list;
+    }
+
+    static int testCaseNo = 1;
+    private static bool check(bool expected, bool actual){
+        //check lengths match
+        var result = expected == actual;
+        var rightTick = "\u2713";
+        var wrongTick = "\u2717";
+        
+        if (result)
+            Console.WriteLine("{0} Test case #{1}, PASS", rightTick, testCaseNo);
+        else
+        {
+            Console.WriteLine("{0} Test case #{1}, FAILED", wrongTick, testCaseNo);
+            Console.WriteLine("Expected: {0}", expected);
+            Console.WriteLine("Actual: {0}", actual);
+        }
+        Console.WriteLine();
+        
+        testCaseNo++;
+        
+        return result;
+    }
+}

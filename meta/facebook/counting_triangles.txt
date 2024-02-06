@@ -1,0 +1,156 @@
+Counting Triangles
+Given a list of N triangles with integer side lengths, determine how many different triangles there are. Two triangles are considered to be the same if they can both be placed on the plane such that their vertices occupy exactly the same three points.
+Signature
+int countDistinctTriangles(ArrayList<Sides> arr)
+or 
+int countDistinctTrianges(int[][] arr)
+Input
+In some languages, arr is an Nx3 array where arr[i] is a length-3 array that contains the side lengths of the ith triangle. In other languages, arr is a list of structs/objects that each represent a single triangle with side lengths a, b, and c.
+It's guaranteed that all triplets of side lengths represent real triangles.
+All side lengths are in the range [1, 1,000,000,000]
+1 <= N <= 1,000,000
+Output
+Return the number of distinct triangles in the list.
+Example 1
+arr = [[2, 2, 3], [3, 2, 2], [2, 5, 6]]
+output = 2
+The first two triangles are the same, so there are only 2 distinct triangles.
+Example 2
+arr = [[8, 4, 6], [100, 101, 102], [84, 93, 173]]
+output = 3
+All of these triangles are distinct.
+Example 3
+arr = [[5, 8, 9], [5, 9, 8], [9, 5, 8], [9, 8, 5], [8, 9, 5], [8, 5, 9]]
+output = 1
+All of these triangles are the same.
+
+
+using System;
+using System.Collections.Generic;
+
+class CountingTriangles
+{
+    private static int testCaseNo = 0;
+
+    static void Main(string[] args)
+    {
+        var input = new List<int[]> { new[]{ 2, 2, 3 }, new[]{ 3, 2, 2 }, new[]{ 2, 5, 6 } };
+        var expected = 2;
+        var actual = countDistinctTriangles(input);
+        check(expected, actual);
+
+        input = new List<int[]> { new[]{ 8, 4, 6 }, new[]{ 100, 101, 102 }, new[]{ 84, 93, 173 } };
+        expected = 3;
+        actual = countDistinctTriangles(input);
+        check(expected, actual);
+
+        input = new List<int[]> { new[]{ 5, 8, 9 }, new[]{ 5, 9, 8 }, new[]{ 9, 5, 8 }, new[]{ 9, 8, 5 }, new[]{ 8, 9, 5 }, new[]{ 8, 5, 9 } };
+        expected = 1;
+        actual = countDistinctTriangles(input);
+        check(expected, actual);
+    }
+
+    private static int countDistinctTriangles(List<int[]> arr)
+    {
+        if (arr == null)
+            return 0;
+
+        var n = arr.Count;
+
+        //sort list 
+        var sorted = sort(arr);
+
+        var count = 1;
+        for (int i = 1; i < n; i++)
+            if (compareTo(sorted[i], sorted[i - 1])  != 0)
+                count++;
+
+        return count;
+
+    }
+
+    private static List<int[]> sort(List<int[]> arr)
+    {
+        if (arr.Count <= 1)
+            return arr;
+
+        var n = arr.Count;
+
+        var mid = n / 2;
+        var pivot = sortedThree(arr[mid]);
+
+        var left = new List<int[]>();
+        var middle = new List<int[]>();
+        var right = new List<int[]>();
+
+        for (var i = 0; i < n; i++)
+        {
+            var elem = sortedThree(arr[i]);
+
+            var comparisson = compareTo(elem, pivot);
+            if (comparisson == -1)
+                left.Add(elem);
+            else if (comparisson == 1)
+                right.Add(elem);
+            else
+                middle.Add(elem);
+        }
+
+        var leftS = sort(left);
+        var rightS = sort(right);
+
+        var result = new List<int[]>();
+
+        result.AddRange(leftS);
+        result.AddRange(middle);
+        result.AddRange(right);
+        
+        return result;
+    }
+
+    private static int[] sortedThree(int[] element)
+    {
+        var sorted = new List<int>(element);
+        sorted.Sort();
+        return sorted.ToArray();
+    }
+
+    private static int compareTo(int[] a, int[] b)
+    {
+        if (a[0] < b[0])
+            return -1;
+        else if (a[0] > b[0])
+            return 1;
+        else if (a[1] < b[1])
+            return -1;
+        else if (a[1] > b[1])
+            return 1;
+        else if (a[2] < b[2])
+            return -1;
+        else if (a[2] > b[2])
+            return 1;
+        else
+            return 0;
+    }
+
+    private static bool check(int expected, int actual)
+    {
+        testCaseNo++;
+
+        var result = expected == actual;
+        var rightTick = "\u2713";
+        var wrongTick = "\u2717";
+
+        if (result)
+            Console.WriteLine("{0} Test case #{1}, PASS", rightTick, testCaseNo);
+        else
+        {
+            Console.WriteLine("{0} Test case #{1}, FAILED", wrongTick, testCaseNo);
+            Console.WriteLine("Expected: {0}", expected);
+            Console.WriteLine("Actual: {0}", actual);
+        }
+        Console.WriteLine();
+
+        return result;
+    }
+}

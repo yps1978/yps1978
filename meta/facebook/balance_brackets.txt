@@ -1,0 +1,110 @@
+Balance Brackets
+A bracket is considered to be any one of the following characters: (, ), {, }, [, or ].
+We consider two brackets to be matching if the first element is an open-bracket, e.g., (, {, or [, and the second bracket is a close-bracket of the same type, e.g., ( and ), [ and ], and { and } are the only pairs of matching brackets.
+Furthermore, a sequence of brackets is said to be balanced if the following conditions are met:
+The sequence is empty, or
+The sequence is composed of two, non-empty, sequences both of which are balanced, or
+The first and last brackets of the sequence are matching, and the portion of the sequence without the first and last elements is balanced.
+You are given a string of brackets. Your task is to determine whether each sequence of brackets is balanced. If a string is balanced, return true, otherwise, return false
+Signature
+bool isBalanced(String s)
+Input
+String s with length between 1 and 1000
+Output
+A boolean representing if the string is balanced or not
+Example 1
+s = {[()]}
+output: true
+Example 2
+s = {}()
+output: true
+Example 3
+s = {(})
+output: false
+Example 4
+s = )
+output: false
+
+
+using System;
+using System.Collections.Generic;
+
+// We don’t provide test cases in this language yet, but have outlined the signature for you. Please write your code below, and don’t forget to test edge cases!
+class BalancedBrackets {
+    private static int testCaseNo = 0;
+    
+    static void Main(string[] args) {
+        // Call isBalanced() with test cases here
+        var s = "{[()]}";
+        var expected = true;
+        var actual = isBalanced(s);
+        check(expected, actual);
+        
+        s = "{}()";
+        expected = true;
+        actual = isBalanced(s);
+        check(expected, actual);
+        
+        s = "{(})";
+        expected = false;
+        actual = isBalanced(s);
+        check(expected, actual);
+        
+        s = "}";
+        expected = false;
+        actual = isBalanced(s);
+        check(expected, actual);
+    }
+
+    private static bool isBalanced(string s) {
+        var queue = new List<char>();
+        
+        while (s != "")
+        {
+            var chr = s[0];
+            
+            if (queue.Count==0)
+                queue.Add(chr);
+            else
+            {
+                var lastIndex = queue.Count-1; 
+                if (isClosingChar(queue[lastIndex], chr))
+                    queue.RemoveAt(lastIndex);
+                else
+                    queue.Add(chr);
+            }
+            s = s.Substring(1);
+        }
+        
+        return queue.Count == 0;
+    }
+    
+    private static bool isClosingChar(char a, char b){
+        return (a=='{' && b=='}')
+            ||
+            (a=='(' && b==')')
+            ||
+            (a=='[' && b==']');            
+    }
+
+    private static bool check(bool expected, bool actual)
+    {
+        testCaseNo++;
+
+        var result = expected == actual;
+        var rightTick = "\u2713";
+        var wrongTick = "\u2717";
+
+        if (result)
+            Console.WriteLine("{0} Test case #{1}, PASS", rightTick, testCaseNo);
+        else
+        {
+            Console.WriteLine("{0} Test case #{1}, FAILED", wrongTick, testCaseNo);
+            Console.WriteLine("Expected: {0}", expected);
+            Console.WriteLine("Actual: {0}", actual);
+        }
+        Console.WriteLine();
+
+        return result;
+    }
+}
