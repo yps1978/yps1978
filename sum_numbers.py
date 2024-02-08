@@ -7,32 +7,41 @@ class TreeNode(object):
 
 
 class Solution(object):
+
     def sumNumbers(self, root):
         """
         :type root: TreeNode
         :rtype: int
         """
 
-        if root is None:
-            return 0
+        def reverse_sum(node, h, sum):
+            if node is None:
+                return 0
 
-        return (root.val * 10) + self.sumNumbers(root.left) + self.sumNumbers(root.right)
+            current = node.val * pow(10, h)
+            if node.left is None and node.right is None:
+                return int(str(sum + current)[::-1])
+
+            return reverse_sum(node.left, h + 1, sum + current) + reverse_sum(node.right, h + 1, sum + current)
+
+        return reverse_sum(root, 0, 0)
 
     def get_tree(self, arr):
         root = TreeNode(arr[0])
         list = [root]
-        miter = iter(range(0, len(arr)))
-        for i in miter:
-            node = list.pop()
-            node.val = arr[i]
+        i = 0
+        while i < len(arr):
+            node = list.pop(0)
             if i + 1 < len(arr):
                 node.left = TreeNode(arr[i + 1])
                 list.append(node.left)
-                next(miter, None)
+                i += 1
             if i + 1 < len(arr):
                 node.right = TreeNode(arr[i + 1])
                 list.append(node.right)
-                next(miter, None)
+                i += 1
+            else:
+                i += 1
 
         return root
 
@@ -65,3 +74,7 @@ if __name__ == "__main__":
     output_1 = s.sumNumbers(s.get_tree(test_1))
     check(expected_1, output_1)
 
+    test_2 = [4, 9, 0, 5, 1]
+    expected_2 = 1026
+    output_2 = s.sumNumbers(s.get_tree(test_2))
+    check(expected_2, output_2)
